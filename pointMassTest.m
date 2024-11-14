@@ -2,6 +2,8 @@
 clc
 clear
 
+% testing
+
 g_N = [0 0 -9.81]'; % gravity acceleration in inertial frame
 
 r_b_0 = [0 0.0009 0]';
