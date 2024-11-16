@@ -4,20 +4,11 @@ clear
 
 g_N = [0 0 -9.81]'; % gravity acceleration in inertial frame
 
-r_b_0 = [0 0.0009 0]';
-r_b_0_cross = [0        -r_b_0(3) r_b_0(2);
-              r_b_0(3)   0        -r_b_0(1);
-             -r_b_0(2)  r_b_0(1) 0];
-
-m_s = 4.2;
 m_i =  0.3;
-J = m_s*(-r_b_0_cross*r_b_0_cross);
-
 J = diag([0.0226, 0.0257 0.0266]);
 m_s = 4.2;
 % r_b_0 = [1 -0.9 -1.4]'.*1e-3;
 r_b_0 = [0 0 -0.005]';
-
 
 C_f = 0.00; % coefficient of friction
 k_p = 4000;
@@ -60,9 +51,6 @@ C_b_N = quat2dcm(q_b_N);
 torque = out.torque.signals.values(:,:)';
 g_b = out.g_b.signals.values;
 w_b_out = out.w_b_out.signals.values(:,:)';
-
-
-
 
 x_N = zeros(n,3);
 y_N = zeros(n,3);
