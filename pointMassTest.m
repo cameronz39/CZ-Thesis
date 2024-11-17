@@ -6,17 +6,7 @@ clear
 
 g_N = [0 0 -9.81]'; % gravity acceleration in inertial frame
 
-<<<<<<< HEAD
 m_i =  0.3;
-=======
-r_b_0 = [0 0.0009 0]';
-r_b_0_cross = [0        -r_b_0(3) r_b_0(2);
-              r_b_0(3)   0        -r_b_0(1);
-             -r_b_0(2)  r_b_0(1) 0];
-
-m_i =  0.3;
-
->>>>>>> 4015abf5352f2bc1dffaccdf78582e057f6a9793
 J = diag([0.0226, 0.0257 0.0266]);
 m_s = 4.2;
 % r_b_0 = [1 -0.9 -1.4]'.*1e-3;
