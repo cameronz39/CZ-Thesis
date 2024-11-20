@@ -8,25 +8,36 @@
 clc
 clear
 
-beta = 5;
-solver = 0; % 0 for Asaithambi change of variables, 1 for direct ODE45 on Falkner-Skan equation
+beta = 2;
+solver = 1; % 0 for Asaithambi change of variables, 1 for direct ODE45 on Falkner-Skan equation
 error = 10^-5;
 
 % 'm1' denotes the previous index ('minus one')
 % 'p1' denotes the next index ('plus one')
 
 % provide two initial guesses for the secant method for both 'a' and etaMax
-etaMax_km1 = 1;
-etaMax_k = 1.1;
-a_jm1 = 1.2;
-a_j = 1.21;
+initialGuesses = 1;
 
-aStar_k = 1.2;
+if (initialGuesses == 0)
+    etaMax_km1 = 1;
+    etaMax_k = 1.1;
+    a_jm1 = 1.2;
+    a_j = 1.21;
+    aStar_k = 1.2;
+else
+    etaMax_km1 = 3;
+    etaMax_k = 4;
+    a_jm1 = 1.2;
+    a_j = 1.21;
+    aStar_k = 1.2;
+end
 
 
 k = 1;
 while (abs(h(aStar_k,etaMax_k,beta,solver) - 0) > error)
-    j = 1;
+    disp("----------------------------------------")
+    disp("k Iteration Number: " + k);
+   
     if (k ~= 1) % update the guesses for etaMax
         etaMax_km1 = etaMax_k;
         etaMax_k = etaMax_kp1;
@@ -34,9 +45,10 @@ while (abs(h(aStar_k,etaMax_k,beta,solver) - 0) > error)
         a_jm1 = aStar_k;
         a_j = aStar_k + 0.01;
     end
-
+    j = 1;
     % iterate through different values of a to converge on aStar
     while (abs(g(a_j,etaMax_k,beta,solver) - 1) > error)
+        disp("J iteration number: " + j)
         if (j ~= 1) % update the guesses for a
             a_jm1 = a_j;
             a_j = a_jp1;
@@ -50,8 +62,7 @@ while (abs(h(aStar_k,etaMax_k,beta,solver) - 0) > error)
     % denote the converged on value for 'a' at iteration k as 'aStar_k'
     aStar_k = a_jp1;
 
-    disp("----------------------------------------")
-    disp("Iteration Number: " + k);
+    
     disp("A value of etaMax = " + etaMax_k + " produced an aStar_k value of: " + aStar_k)
 
     % apply the secant method on etaMax using the current value of aStar
@@ -74,6 +85,7 @@ function out = g(a,etaMax,beta,solver)
     if (solver == 0)
         xiSpan = [0 1];
         initialValue = [0 0 a];
+        disp("Now solving Falkner Skan with a = " + a + " and etaMax = " + etaMax)
         [xi,sol] = ode45(@FalknerSkan,xiSpan,initialValue,options,beta,etaMax); %#ok<ASGLU>
         out = sol(end,2);
     end
@@ -81,7 +93,8 @@ function out = g(a,etaMax,beta,solver)
     if(solver == 1)
         etaSpan = [0 etaMax];
         initialValue = [0 0 a];
-        [eta,sol] = ode45(@FalknerSkan2,etaSpan,initialValue,options,beta);
+        disp("Now solving Falkner Skan with a = " + a + " and etaMax = " + etaMax)
+        [eta,sol] = ode45(@FalknerSkan2,etaSpan,initialValue,options,beta); %%#ok<ASGLU>%#ok<ASGLU>#ok<*ASGLU>
         out = sol(end,2);
     end
 end
