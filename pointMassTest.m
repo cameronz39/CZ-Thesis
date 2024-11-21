@@ -9,15 +9,15 @@ g_N = [0 0 -9.81]'; % gravity acceleration in inertial frame
 m_i =  0.3;
 J = diag([0.0226, 0.0257 0.0266]);
 m_s = 4.2;
-% r_b_0 = [1 -0.9 -1.4]'.*1e-3;
-r_b_0 = [0 0 -0.005]';
+r_b_0 = [1 -0.9 -1.4]'.*1e-3;
+% r_b_0 = [0 0 -0.005]';
 
-C_f = 0.00; % coefficient of friction
+C_f = 0.01; % coefficient of friction
 k_p = 4000;
 
 r_hat0 = [0 0 0]'; % initial estimation of r
 
-w_0 = [0 0 0]'; % [rad/s]123123
+w_0 = [0 0 0]'; % [rad/s]
 % w_0 = [0.0888 0.8229 1.3611]';
 q_0 = [0 0 0 1]';
 EA_0 = [0 0 0]';
@@ -84,9 +84,10 @@ hold on;
 
 % Set axis limits (adjust based on your data)
 scale = 1;
-xlim([-scale, scale]);
-ylim([-scale, scale]);
-zlim([-scale, scale]);
+sliderScale = 0.25;
+xlim([-1.3*scale, 1.3*scale]);
+ylim([-1.3*scale, 1.3*scale]);
+zlim([-1.3*scale, 1.3*scale]);
 
 xlabel('X');
 ylabel('Y');
@@ -118,9 +119,23 @@ hVector4 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.5, 'Color'
 % hVector6 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', "#7E2F8E");
 
 % angular velocity
-hVector7 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', "#7E2F8E");
+% hVector7 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', "#7E2F8E");
 
-r_N = 0.85*(r_N./norm(r_N(1,:)));
+% x sliding rail
+hVector8 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', "#D95319");
+hVector9 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', "#D95319");
+
+% y sliding rail
+hVector10 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', "#D95319");
+hVector11 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', "#D95319");
+
+% z sliding rail
+hVector12 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', "#D95319");
+hVector13 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', "#D95319");
+
+
+
+r_N = 1*(r_N./norm(r_N(1,:)));
 torque_N = torque_N./norm(torque_N(1,:));
 g_N_out = g_N_out./norm(g_N_out(1,:));
 w_N = w_N./(max(norm_w_N));
@@ -169,9 +184,60 @@ for i = 1:n-1
     % hVector6.WData = g_N_out(i, 3);
 
     % angular velocity
-    hVector7.UData = w_N(i, 1);
-    hVector7.VData = w_N(i, 2);
-    hVector7.WData = w_N(i, 3);
+    % hVector7.UData = w_N(i, 1);
+    % hVector7.VData = w_N(i, 2);
+    % hVector7.WData = w_N(i, 3);
+
+    % x-sliding rail
+    hVector8.XData = scale*z_N(i, 1);
+    hVector8.YData = scale*z_N(i, 2);
+    hVector8.ZData = scale*z_N(i, 3);
+
+    hVector8.UData = scale*sliderScale*x_N(i,1);
+    hVector8.VData = scale*sliderScale*x_N(i,2);
+    hVector8.WData = scale*sliderScale*x_N(i,3);
+
+    hVector9.XData = scale*z_N(i, 1);
+    hVector9.YData = scale*z_N(i, 2);
+    hVector9.ZData = scale*z_N(i, 3);
+
+    hVector9.UData = -scale*sliderScale*x_N(i,1);
+    hVector9.VData = -scale*sliderScale*x_N(i,2);
+    hVector9.WData = -scale*sliderScale*x_N(i,3);
+
+    % y-sliding rail
+    hVector10.XData = scale*x_N(i, 1);
+    hVector10.YData = scale*x_N(i, 2);
+    hVector10.ZData = scale*x_N(i, 3);
+
+    hVector10.UData = scale*sliderScale*y_N(i,1);
+    hVector10.VData = scale*sliderScale*y_N(i,2);
+    hVector10.WData = scale*sliderScale*y_N(i,3);
+
+    hVector11.XData = scale*x_N(i, 1);
+    hVector11.YData = scale*x_N(i, 2);
+    hVector11.ZData = scale*x_N(i, 3);
+
+    hVector11.UData = -scale*sliderScale*y_N(i,1);
+    hVector11.VData = -scale*sliderScale*y_N(i,2);
+    hVector11.WData = -scale*sliderScale*y_N(i,3);
+
+    % z-sliding rail
+    hVector12.XData = scale*y_N(i, 1);
+    hVector12.YData = scale*y_N(i, 2);
+    hVector12.ZData = scale*y_N(i, 3);
+
+    hVector12.UData = scale*sliderScale*z_N(i,1);
+    hVector12.VData = scale*sliderScale*z_N(i,2);
+    hVector12.WData = scale*sliderScale*z_N(i,3);
+
+    hVector13.XData = scale*y_N(i, 1);
+    hVector13.YData = scale*y_N(i, 2);
+    hVector13.ZData = scale*y_N(i, 3);
+
+    hVector13.UData = -scale*sliderScale*z_N(i,1);
+    hVector13.VData = -scale*sliderScale*z_N(i,2);
+    hVector13.WData = -scale*sliderScale*z_N(i,3);
 
  
     % Pause for a short duration to create animation effect
