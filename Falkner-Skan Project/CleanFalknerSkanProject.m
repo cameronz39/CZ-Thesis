@@ -39,7 +39,7 @@ wedgeAngle = pi/6;
 beta = 2*wedgeAngle/pi;
 m = beta/(2-beta);
 nu = 1.48e-5; % [m^2/s] kinematic viscosity
-
+rho = 1.225; % [kg/m^3] density
 
 [a,etaMax] = FalkerRootFinder(beta,10^-5);
 options = odeset('RelTol',1e-6,'AbsTol',1e-6); 
@@ -89,10 +89,31 @@ xlabel('Streamwise Velocity [m/s]');
 xticks([0 10 20 spacing spacing + 10 spacing + 20 2*spacing 2*spacing + 10 2*spacing + 20]);
 xticklabels({'0','10','20','0','10','20','0','10','20'});
 
+% OPTION 2: ALL ONE PLOT
+s = [0.001 0.01 0.05];
+u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS
+u = u_e*fPrime;
+
+ySpan1 = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s(1)));
+ySpan2 = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s(2)));
+ySpan3 = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s(3)));
+
+figure
+plot([u_e, u_e],[0,ySpan(end)],'--','Color','black');
+hold on
+plot(u,ySpan1,'LineWidth',2);
+plot(u,ySpan2,'LineWidth',2);
+plot(u,ySpan3,'LineWidth',2);
+grid on 
+
+legend('','s = 0.1 cm','','s = 1.0 cm','','s = 5.0 cm','Location','northwest');
+ylabel('Normal Distance From Wall [m]');
+xlabel('Streamwise Velocity [m/s]');
+
 %% Plot some temperature profiles (part d)
 Pr = 0.707; % Prandtl number of air at 1 atm and 300K
 f = sol(:,1);
-T_e = 200; % [K]
+T_e = 300; % [K]
 T_w = 250; % [K]
 
 % define captial F
@@ -114,7 +135,7 @@ T = Theta*(T_e - T_w) + T_w;
 % case 1: s = 0.1 cm
 s = 0.001; % [m];
 u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS (WILL ALSO CHANGE Y_SPAN)
-u = u_e*fPrime;
+
 
 ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));
 figure
@@ -128,7 +149,7 @@ grid on
 % case 2: s = 1.0 cm
 s = 0.01; % [m];
 u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS
-u = u_e*fPrime;
+
 
 ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));
 plot([T_e + spacing, T_e + spacing],[0,ySpan(end)],'--','Color','black');
@@ -137,7 +158,6 @@ plot(T + spacing,ySpan,'LineWidth',2);
 % case 3: s = 5.0 cm
 s = 0.05; % [m];
 u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS
-u = u_e*fPrime;
 
 ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));    
 plot([T_e + 2*spacing, T_e + 2*spacing],[0,ySpan(end)],'--','Color','black');
@@ -149,6 +169,29 @@ xlabel('Temperature [K]');
 xticks([T_w, 275, 300, T_w + spacing, 275 + spacing, 300 + spacing, T_w + 2*spacing, 275 + 2*spacing, 300 + 2*spacing]);
 xticklabels({'250','275','300','250','275','300','250','275','300'});
 xlim([250 460])
+
+%% Find Drag Force, Drag Coefficient, and Heat Transfer
+% find c_fw and tau_w at every streamwise location
+c_fw = zeros(length(etaSpan),1);
+tau_w = zeros(length(etaSpan),1);
+
+s = linspace(0.1,1,1000); % [m]
+for i = 1:length(etaSpan)
+    
+    c_fw(i) = 2*a*sqrt(nu / ((2*alpha - beta)*u_e*s(i)));
+    tau_w(i) = c_fw(i)*1/2*rho*u_e^2;
+end
+
+% integrate over the plate to get the drag coefficient and drag force
+C_f = trapz(c_fw);
+F_d = trapz(tau_w);
+
+% for heat transfer we'll need ThetaPrime_w
+ThetaPrime_w = 1 / trapz(F(1:end));
+
+% calculate heat transfer
+kappa = 1.4;
+q_w = C_f * F_d * ThetaPrime_w * rho * u_e^3 / kappa;
 %%
 function out = g(a,etaMax,beta,solver) 
     options = odeset('RelTol',1e-6,'AbsTol',1e-6); 
