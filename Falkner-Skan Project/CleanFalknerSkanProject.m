@@ -2,12 +2,13 @@
 % Asaithambi, N. S. "A numerical method for the solution of the Falkner-Skan equation." 
 % Applied Mathematics and Computation 81.2-3 (1997): 259-264.%
 
-% the character 'a' has been used instead of alpha
-% the character 'j' has been used instead of of the character 'l'
-%% Converge on values for etaMax and f''(w)
+% the character 'a' has been used instead of alpha to denote the second derivative of f at the wall
+% the character 'j' has been used instead of of the character 'l' to index the secant method loop
+
 clc
 clear
 
+%% Use the root finder and solve for the thicknesses (part a)
 beta = 2;
 [a,etaMax] = FalkerRootFinder(beta,10^-6);
 
@@ -16,7 +17,7 @@ fprintf('Final etaMax: %.*g\n', 6, etaMax);
 fprintf('Final aStar: %.*g\n', 6, a);
 
 
-%% Solve for the thicknesses
+
 
 % solve the ODE again using the final values for etaMax and aStar
 options = odeset('RelTol',1e-6,'AbsTol',1e-6); 
@@ -32,6 +33,19 @@ eta_m = (a - beta*eta_d)/(1+beta);
 fprintf('Displacement Thickness: %.*g\n', 6, eta_d);
 fprintf('Momentum Thickness: %.*g\n', 6, eta_m);
 
+%% Solve for f' and compare to book solution (part b)
+
+etasBook = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0 4.5 5.0];
+fPrime = sol(:,2);
+
+fPrimeComparison = interp1(etaSpan,fPrime,etasBook,'linear');
+
+for i = 1:length(etasBook)
+    fprintf('fPrime at eta = %.*g: %.*g\n', 6, etasBook(i), 6, fPrimeComparison(i));
+end
+
+
+
 %% Plot some velocity profiles (part c)
 alpha = 1;
 u_inf = 20; % [m/s] velocity 1 meter downstream of wedge
@@ -40,6 +54,7 @@ beta = 2*wedgeAngle/pi;
 m = beta/(2-beta);
 nu = 1.48e-5; % [m^2/s] kinematic viscosity
 rho = 1.225; % [kg/m^3] density
+C = 20; % given that u_e = C*s^m, u_e at s = 1 implies C = 20
 
 [a,etaMax] = FalkerRootFinder(beta,10^-5);
 options = odeset('RelTol',1e-6,'AbsTol',1e-6); 
@@ -51,7 +66,7 @@ fPrime = sol(:,2);
 
 % case 1: s = 0.1 cm
 s = 0.001; % [m];
-u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS (WILL ALSO CHANGE Y_SPAN)
+u_e = C*(s^m); 
 u = u_e*fPrime;
 
 ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));
@@ -66,49 +81,27 @@ grid on
 
 % case 2: s = 1.0 cm
 s = 0.01; % [m];
-u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS
+u_e = C*(s^m); % [m/s] 
 u = u_e*fPrime;
 
 ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));
-plot([u_e + spacing, u_e + spacing],[0,ySpan(end)],'--','Color','black');
-plot(u + spacing,ySpan,'LineWidth',2);
+plot([u_e, u_e],[0,ySpan(end)],'--','Color','black');
+plot(u,ySpan,'LineWidth',2);
 
 % case 3: s = 5.0 cm
 s = 0.05; % [m];
-u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS
+u_e = C*(s^m); % [m/s] 
 u = u_e*fPrime;
 
 ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));
-plot([u_e + 2*spacing, u_e + 2*spacing],[0,ySpan(end)],'--','Color','black');
-plot(u + 2*spacing,ySpan,'LineWidth',2);
-
-
-legend('','s = 0.1 cm','','s = 1.0 cm','','s = 5.0 cm','Location','northwest');
-ylabel('Normal Distance From Wall [m]');
-xlabel('Streamwise Velocity [m/s]');
-xticks([0 10 20 spacing spacing + 10 spacing + 20 2*spacing 2*spacing + 10 2*spacing + 20]);
-xticklabels({'0','10','20','0','10','20','0','10','20'});
-
-% OPTION 2: ALL ONE PLOT
-s = [0.001 0.01 0.05];
-u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS
-u = u_e*fPrime;
-
-ySpan1 = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s(1)));
-ySpan2 = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s(2)));
-ySpan3 = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s(3)));
-
-figure
 plot([u_e, u_e],[0,ySpan(end)],'--','Color','black');
-hold on
-plot(u,ySpan1,'LineWidth',2);
-plot(u,ySpan2,'LineWidth',2);
-plot(u,ySpan3,'LineWidth',2);
-grid on 
+plot(u,ySpan,'LineWidth',2);
+
 
 legend('','s = 0.1 cm','','s = 1.0 cm','','s = 5.0 cm','Location','northwest');
 ylabel('Normal Distance From Wall [m]');
 xlabel('Streamwise Velocity [m/s]');
+
 
 %% Plot some temperature profiles (part d)
 Pr = 0.707; % Prandtl number of air at 1 atm and 300K
@@ -116,7 +109,7 @@ f = sol(:,1);
 T_e = 300; % [K]
 T_w = 250; % [K]
 
-% define captial F
+% define captial F at each eta
 F = zeros(length(etaSpan),1);
 for i = 1:length(etaSpan)
     F(i) = exp(-Pr*trapz(f(1:i)));
@@ -134,12 +127,11 @@ T = Theta*(T_e - T_w) + T_w;
 
 % case 1: s = 0.1 cm
 s = 0.001; % [m];
-u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS (WILL ALSO CHANGE Y_SPAN)
+u_e = C*(s^m); % [m/s] 
 
 
 ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));
 figure
-spacing = 75;
 xline(T_e,'--');
 plot([T_e, T_e],[0,ySpan(end)],'--','Color','black');
 hold on
@@ -148,50 +140,46 @@ grid on
 
 % case 2: s = 1.0 cm
 s = 0.01; % [m];
-u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS
+u_e = C*(s^m); % [m/s] 
 
 
 ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));
-plot([T_e + spacing, T_e + spacing],[0,ySpan(end)],'--','Color','black');
-plot(T + spacing,ySpan,'LineWidth',2);
+plot([T_e, T_e],[0,ySpan(end)],'--','Color','black');
+plot(T,ySpan,'LineWidth',2);
 
 % case 3: s = 5.0 cm
 s = 0.05; % [m];
-u_e = 20; % [m/s] <---------------- DOUBLE CHECK THIS
+u_e = C*(s^m); % [m/s] 
 
 ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));    
-plot([T_e + 2*spacing, T_e + 2*spacing],[0,ySpan(end)],'--','Color','black');
-plot(T + 2*spacing,ySpan,'LineWidth',2);
+plot([T_e, T_e],[0,ySpan(end)],'--','Color','black');
+plot(T,ySpan,'LineWidth',2);
 
 legend('','s = 0.1 cm','','s = 1.0 cm','','s = 5.0 cm','Location','northwest');
 ylabel('Normal Distance From Wall [m]');
 xlabel('Temperature [K]');  
-xticks([T_w, 275, 300, T_w + spacing, 275 + spacing, 300 + spacing, T_w + 2*spacing, 275 + 2*spacing, 300 + 2*spacing]);
-xticklabels({'250','275','300','250','275','300','250','275','300'});
-xlim([250 460])
+xlim([250,305])
 
-%% Find Drag Force, Drag Coefficient, and Heat Transfer
-% find c_fw and tau_w at every streamwise location
-c_fw = zeros(length(etaSpan),1);
-tau_w = zeros(length(etaSpan),1);
+%% Find Drag Force, Drag Coefficient, and Heat Transfer (part e)
+% find tau_w at every streamwise location
 
-s = linspace(0.1,1,1000); % [m]
-for i = 1:length(etaSpan)
-    
-    c_fw(i) = 2*a*sqrt(nu / ((2*alpha - beta)*u_e*s(i)));
-    tau_w(i) = c_fw(i)*1/2*rho*u_e^2;
-end
+% the force of drag may be found be integrating tau_w over the plate
+% this integral may be solved for exactly using the antidifferentiation 
+% and the fundamental theorem of calculus
+F_d = ((rho*nu*a*C^(3/2))/sqrt(nu*(2*alpha-beta)))*(1^0.8/0.8);
 
-% integrate over the plate to get the drag coefficient and drag force
-C_f = trapz(c_fw);
-F_d = trapz(tau_w);
+% non-dimensionalize for coefficient of drag
+C_f = F_d / (0.5*rho*u_inf^2);
 
 % for heat transfer we'll need ThetaPrime_w
 ThetaPrime_w = 1 / trapz(F(1:end));
 
 % calculate heat transfer
-kappa = 1.4;
-q_w = C_f * F_d * ThetaPrime_w * rho * u_e^3 / kappa;
+kappa = 0.026;
+q_w = (sqrt(C)*kappa*(T_w - T_e)*ThetaPrime_w)/sqrt(nu*(2*alpha-beta)) * (1^0.6/0.6);
+
+
+
 %%
 function out = g(a,etaMax,beta,solver) 
     options = odeset('RelTol',1e-6,'AbsTol',1e-6); 
