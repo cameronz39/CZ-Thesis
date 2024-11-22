@@ -9,7 +9,7 @@ clc
 clear
 
 %% Use the root finder and solve for the thicknesses (part a)
-beta = 2;
+beta = 1;
 error = 10^-5;
 [a,etaMax] = FalknerRootFinder(beta,error);
 
@@ -39,7 +39,7 @@ fprintf('Momentum Thickness: %.*g\n', 6, eta_m);
 etasBook = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0 4.5 5.0];
 fPrime = sol(:,2);
 
-fPrimeComparison = interp1(etaSpan,fPrime,etasBook,'linear');
+fPrimeComparison = interp1(etaSpan,fPrime,etasBook,'linear')';
 
 for i = 1:length(etasBook)
     fprintf('fPrime at eta = %.*g: %.*g\n', 6, etasBook(i), 6, fPrimeComparison(i));
