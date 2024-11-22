@@ -10,7 +10,8 @@ clear
 
 %% Use the root finder and solve for the thicknesses (part a)
 beta = 2;
-[a,etaMax] = FalkerRootFinder(beta,10^-6);
+error = 10^-5;
+[a,etaMax] = FalknerRootFinder(beta,error);
 
 disp("-------------------------------------")
 fprintf('Final etaMax: %.*g\n', 6, etaMax);
@@ -56,7 +57,7 @@ nu = 1.48e-5; % [m^2/s] kinematic viscosity
 rho = 1.225; % [kg/m^3] density
 C = 20; % given that u_e = C*s^m, u_e at s = 1 implies C = 20
 
-[a,etaMax] = FalkerRootFinder(beta,10^-5);
+[a,etaMax] = FalknerRootFinder(beta,10^-5);
 options = odeset('RelTol',1e-6,'AbsTol',1e-6); 
 xiSpan = [0 1];
 initialValue = [0 0 a];
@@ -181,40 +182,23 @@ q_w = (sqrt(C)*kappa*(T_w - T_e)*ThetaPrime_w)/sqrt(nu*(2*alpha-beta)) * (1^0.6/
 
 
 %%
-function out = g(a,etaMax,beta,solver) 
+function out = g(a,etaMax,beta)
     options = odeset('RelTol',1e-6,'AbsTol',1e-6); 
-    if (solver == 0)
-        xiSpan = [0 1];
-        initialValue = [0 0 a];
-        % disp("Now solving Falkner Skan with a = " + a + " and etaMax = " + etaMax)
-        [xi,sol] = ode45(@FalknerSkan,xiSpan,initialValue,options,beta,etaMax); %#ok<ASGLU>
-        out = sol(end,2);
-    end
+    xiSpan = [0 1];
+    initialValue = [0 0 a];
+    [xi,sol] = ode45(@FalknerSkan,xiSpan,initialValue,options,beta,etaMax); %#ok<ASGLU>
+    out = sol(end,2);
 
-    if(solver == 1)
-        etaSpan = [0 etaMax];
-        initialValue = [0 0 a];
-        % disp("Now solving Falkner Skan with a = " + a + " and etaMax = " + etaMax)
-        [eta,sol] = ode45(@FalknerSkan2,etaSpan,initialValue,options,beta); %%#ok<ASGLU>
-        out = sol(end,2);
-    end
+
 end
 
-function out = h(a,etaMax,beta,solver) %#ok<*DEFNU>
+function out = h(a,etaMax,beta) %#ok<*DEFNU>
     options = odeset('RelTol',1e-6,'AbsTol',1e-6); 
-    if (solver == 0)
-        xiSpan = [0 1];
-        initialValue = [0 0 a];
-        [xi,sol] = ode45(@FalknerSkan,xiSpan,initialValue,options,beta,etaMax); %#ok<ASGLU>
-        out = sol(end,3);
-    end  
-    
-    if(solver == 1)
-        etaSpan = [0 etaMax];
-        initialValue = [0 0 a];
-        [eta,sol] = ode45(@FalknerSkan2,etaSpan,initialValue,options,beta);
-        out = sol(end,3);
-    end
+    xiSpan = [0 1];
+    initialValue = [0 0 a];
+    [xi,sol] = ode45(@FalknerSkan,xiSpan,initialValue,options,beta,etaMax); %#ok<ASGLU>
+    out = sol(end,3);
+
 end
 
 function out = FalknerSkan(xi,initialValue, beta, etaMax) %#ok<INUSD>
@@ -231,22 +215,7 @@ function out = FalknerSkan(xi,initialValue, beta, etaMax) %#ok<INUSD>
     out = [df du dv]';
 end
 
-function odeOutput = FalknerSkan2(eta,initialValue, beta) %#ok<INUSD>
-    % initial conditions
-    f = initialValue(1);
-    df = initialValue(2);
-    ddf = initialValue(3);
-    
-    % calculate derivatives
-    
-    dddf = -f*ddf + beta*(df^2) - beta;
-    
-    odeOutput = [df ddf dddf]';
-end
-
-function [a,etaMax] = FalkerRootFinder(beta,error)
-    solver = 0; % 0 for Asaithambi change of variables, 1 for direct ODE45 on Falkner-Skan equation
-    
+function [a,etaMax] = FalknerRootFinder(beta,error)  
     % 'm1' denotes the previous index ('minus one')
     % 'p1' denotes the next index ('plus one')
     
@@ -259,7 +228,7 @@ function [a,etaMax] = FalkerRootFinder(beta,error)
     
     
     k = 1;
-    while (abs(h(aStar_k,etaMax_k,beta,solver) - 0) > error)
+    while (abs(h(aStar_k,etaMax_k,beta)) > error)
         % disp("----------------------------------------")
         % disp("k Iteration Number: " + k);
        
@@ -272,7 +241,7 @@ function [a,etaMax] = FalkerRootFinder(beta,error)
         end
         j = 1;
         % iterate through different values of a to converge on aStar
-        while (abs(g(a_j,etaMax_k,beta,solver) - 1) > error)
+        while (abs(g(a_j,etaMax_k,beta) - 1) > error)
             % disp("J iteration number: " + j)
             if (j ~= 1) % update the guesses for a
                 a_jm1 = a_j;
@@ -280,7 +249,7 @@ function [a,etaMax] = FalkerRootFinder(beta,error)
             end
         
             % apply the secant method to converge on a
-            delta_a_j = (1 - g(a_j,etaMax_k,beta,solver)) * ( (a_j - a_jm1) / (g(a_j,etaMax_k,beta,solver) - g(a_jm1,etaMax_k,beta,solver)));
+            delta_a_j = (1 - g(a_j,etaMax_k,beta)) * ( (a_j - a_jm1) / (g(a_j,etaMax_k,beta) - g(a_jm1,etaMax_k,beta)));
             a_jp1 = a_j + delta_a_j;
             j = j + 1;
         end
@@ -289,7 +258,7 @@ function [a,etaMax] = FalkerRootFinder(beta,error)
         % disp("A value of etaMax = " + etaMax_k + " produced an aStar_k value of: " + aStar_k)
     
         % apply the secant method on etaMax using the current value of aStar
-        delta_etaMax_k = (0 - h(aStar_k,etaMax_k,beta,solver)) * ( (etaMax_k - etaMax_km1) / (h(aStar_k,etaMax_k,beta,solver) - h(aStar_k,etaMax_km1,beta,solver)));
+        delta_etaMax_k = (0 - h(aStar_k,etaMax_k,beta)) * ( (etaMax_k - etaMax_km1) / (h(aStar_k,etaMax_k,beta) - h(aStar_k,etaMax_km1,beta)));
         etaMax_kp1 = etaMax_k + delta_etaMax_k;
         
         % disp("Change in etaMax: " + delta_etaMax_k);    
