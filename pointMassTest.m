@@ -20,13 +20,6 @@ rho = [0 0 0; % column vectors of each mass' initial position
 
 delta_d = [0 0 0]'; % initial displacement
 
-sum = zeros(size(u,2), 1);
-for i = 1:size(u,2)
-    sum = sum + m_i*delta_d(i)*u(:,i);
-end
-del_r_b = (1/m_s)*sum;
-r_b = r_b_0 + del_r_b;
-
 sum = zeros(size(rho,2),size(rho,2));
 for i = 1:size(rho,2)
     R_i = rho(:,i) + delta_d(i)*u(:,i);
