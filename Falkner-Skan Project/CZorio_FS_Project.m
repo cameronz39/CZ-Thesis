@@ -9,15 +9,13 @@ clc
 clear
 
 %% Use the root finder and solve for the thicknesses (part a)
-beta = 1;
+beta = 2; % <---- CHANGE AS NECESSARY TO FILL OUT TABLE
 error = 10^-5;
 [a,etaMax] = FalknerRootFinder(beta,error);
 
 disp("-------------------------------------")
 fprintf('Final etaMax: %.*g\n', 6, etaMax);
 fprintf('Final aStar: %.*g\n', 6, a);
-
-
 
 
 % solve the ODE again using the final values for etaMax and aStar
@@ -36,16 +34,10 @@ fprintf('Momentum Thickness: %.*g\n', 6, eta_m);
 
 %% Solve for f' and compare to book solution (part b)
 
-etasBook = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0 4.5 5.0];
+etasBook = [0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0 4.5 5.0]';
 fPrime = sol(:,2);
 
 fPrimeComparison = interp1(etaSpan,fPrime,etasBook,'linear')';
-
-for i = 1:length(etasBook)
-    fprintf('fPrime at eta = %.*g: %.*g\n', 6, etasBook(i), 6, fPrimeComparison(i));
-end
-
-
 
 %% Plot some velocity profiles (part c)
 alpha = 1;
@@ -99,9 +91,10 @@ plot([u_e, u_e],[0,ySpan(end)],'--','Color','black');
 plot(u,ySpan,'LineWidth',2);
 
 
-legend('','s = 0.1 cm','','s = 1.0 cm','','s = 5.0 cm','Location','northwest');
-ylabel('Normal Distance From Wall [m]');
-xlabel('Streamwise Velocity [m/s]');
+lgd = legend('','s = 0.1 cm','','s = 1.0 cm','','s = 5.0 cm','Location','northwest');
+ylabel('Normal Distance From Wall [m]', 'FontSize', 13);
+xlabel('Streamwise Velocity [m/s]', 'FontSize', 13);
+fontsize(lgd,12,'points')
 
 
 %% Plot some temperature profiles (part d)
@@ -113,7 +106,7 @@ T_w = 250; % [K]
 % define captial F at each eta
 F = zeros(length(etaSpan),1);
 for i = 1:length(etaSpan)
-    F(i) = exp(-Pr*trapz(f(1:i)));
+    F(i) = exp(-Pr*trapz(f(1:i))); % Eq 7.7b
 end
 
 % solve for Theta at each eta
@@ -121,7 +114,7 @@ Theta = zeros(length(etaSpan),1);
 for i = 1:length(etaSpan)
     den = trapz(F(1:end));
     num = trapz(F(1:i));
-    Theta(i) = num/den;
+    Theta(i) = num/den; % Eq 7.10
 end
 
 T = Theta*(T_e - T_w) + T_w;
@@ -156,28 +149,34 @@ ySpan = etaSpan / sqrt( ((m+1)*u_e) / (2*alpha*nu*s));
 plot([T_e, T_e],[0,ySpan(end)],'--','Color','black');
 plot(T,ySpan,'LineWidth',2);
 
-legend('','s = 0.1 cm','','s = 1.0 cm','','s = 5.0 cm','Location','northwest');
-ylabel('Normal Distance From Wall [m]');
-xlabel('Temperature [K]');  
+lgd = legend('','s = 0.1 cm','','s = 1.0 cm','','s = 5.0 cm','Location','northwest');
+ylabel('Normal Distance From Wall [m]', 'FontSize', 13);
+xlabel('Flow Temperature [K]', 'FontSize', 13);  
 xlim([250,305])
+fontsize(lgd,12,'points')
 
 %% Find Drag Force, Drag Coefficient, and Heat Transfer (part e)
 % find tau_w at every streamwise location
 
 % the force of drag may be found be integrating tau_w over the plate
-% this integral may be solved for exactly using the antidifferentiation 
+% this integral may be solved for exactly using antidifferentiation 
 % and the fundamental theorem of calculus
-F_d = ((rho*nu*a*C^(3/2))/sqrt(nu*(2*alpha-beta)))*(1^0.8/0.8);
+F_d = ((rho*nu*a*C^(3/2))/sqrt(nu*(2*alpha-beta)))*(1^0.8/0.8); % integrating Eq 8.16a from s = 0 to s = 1
 
 % non-dimensionalize for coefficient of drag
-C_f = F_d / (0.5*rho*u_inf^2);
+C_d = F_d / (0.5*rho*u_inf^2);
 
 % for heat transfer we'll need ThetaPrime_w
-ThetaPrime_w = 1 / trapz(F(1:end));
+ThetaPrime_w = 1 / trapz(F(1:end)); % Eq 8.8d
 
-% calculate heat transfer
+% the overall heat transfer may be similarly calculated by integrating q_w 
+% over the plate, which also has an exact integral
 kappa = 0.026;
-q_w = (sqrt(C)*kappa*(T_w - T_e)*ThetaPrime_w)/sqrt(nu*(2*alpha-beta)) * (1^0.6/0.6);
+Q = (sqrt(C)*kappa*(T_w - T_e)*ThetaPrime_w)/sqrt(nu*(2*alpha-beta)) * (1^0.6/0.6); % integrating Eq 8.18a from s = 0 to s = 1
+
+fprintf('Force of drag: %.*g\n', 6, F_d);
+fprintf('Drag Coefficient: %.*g\n', 6, C_d);
+fprintf('Overall Heat Transfer Across Plate: %.*g\n', 6, Q);
 
 
 

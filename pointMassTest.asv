@@ -2,23 +2,25 @@
 clc
 clear
 
+% testing again
+
 g_N = [0 0 -9.81]'; % gravity acceleration in inertial frame
 
 m_i =  0.3;
-J_0 = diag([0.0226, 0.0257 0.0266]); % total inertia of simulator with masses at their home positions
+J_0 = diag([0.0226, 0.0257 0.0266]);
 m_s = 4.2;
-% r_b_0 = [1 -0.9 -1.4]'.*1e-3;
-r_b_0 = [0 0 -0.005]';
+r_b_0 = [1 -0.9 -1.4]'.*1e-3;
+% r_b_0 = [0 0 -0.005]';
 
-u = [1 0 0; % column vectors that each mass slides along
+u = [1 0 0;
      0 1 0;
      0 0 1];
 
-rho = [0 0 0; % column vectors of each mass' initial position
+rho = [0 0 0;
        0 0 0;
        0 0 0];
 
-delta_d = [0 0 0]'; % initial displacement
+delta_d = [0 0.01 0]';
 
 sum = zeros(size(u,2), 1);
 for i = 1:size(u,2)
@@ -36,7 +38,7 @@ for i = 1:size(rho,2)
     sum = sum - (m_i*R_i_cross*R_i_cross);
 end
 
-J_plat =  J_0 - sum; % inertia of the platform without sliding masses
+J = J_0 + sum
 
 C_f = 0.01; % coefficient of friction
 k_p = 4000;
@@ -70,7 +72,7 @@ figure;
 plot(out.tout,squeeze(out.w_b_out.signals.values));
 
 % unpack quaternion
-q_b_N = out.q_b_N.signals.values(:,:)';
+q_b_N = out.q_b_N.signals.values;
 q_b_N = [q_b_N(:,4) q_b_N(:,1:3)];
 % convert to DCM
 C_b_N = quat2dcm(q_b_N);
@@ -78,7 +80,7 @@ C_b_N = quat2dcm(q_b_N);
 
 torque = out.torque.signals.values(:,:)';
 g_b = out.g_b.signals.values;
-w_b_out = out.w_b_out.signals.values(:,:)';
+w_b_out = out.w_b_out.signals.values;
 
 x_N = zeros(n,3);
 y_N = zeros(n,3);
@@ -99,7 +101,7 @@ for i = 1:n
     norm_w_N(i) = norm(w_N(i,:));
 end
 
-r_N = squeeze(out.r_N.signals.values)';
+r_N = squeeze(out.r_N.signals.values);
 
 % Set up the figure
 figure;
