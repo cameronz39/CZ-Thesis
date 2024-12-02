@@ -4,7 +4,7 @@ clc
 % y = [q1, q2, q3, q4, wx, wy, wz, rx, ry, rz, rx_est, ry_est, rz_est, r_mmux, r_mmuy, r_mmuz]
 
 tf = 30; % simulation length
-dt = 0.01; % simulation step size
+dt = 0.05; % simulation step size
 
 %% Testbed characteristics
 % (see eom_chesi.m)
