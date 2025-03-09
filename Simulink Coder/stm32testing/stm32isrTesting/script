@@ -1,0 +1,10 @@
+config load "C:\Users\camer\OneDrive\Desktop\CZ-Thesis\Simulink Coder\stm32testing\stm32isrTesting\stm32isrTesting.ioc"
+project toolchain STM32CubeIDE
+
+SetStructure Advanced
+
+project setCustomFWPath "C:\Users\camer\STM32Cube\Repository\STM32Cube_FW_F4_V1.26.2"
+
+project generate 
+
+exit wait

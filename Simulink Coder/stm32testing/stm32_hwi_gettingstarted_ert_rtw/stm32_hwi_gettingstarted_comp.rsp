@@ -1,0 +1,21 @@
+-I"C:/Users/camer/OneDrive/Desktop/CZ-Thesis/Simulink Coder/stm32testing"
+-I"C:/Users/camer/OneDrive/Desktop/CZ-Thesis/Simulink Coder/stm32testing/include"
+-I"C:/Users/camer/OneDrive/Desktop/CZ-Thesis/Simulink Coder/stm32testing/stm32isrTesting/Core/Inc"
+-IC:/ProgramData/MATLAB/SupportPackages/R2024b/toolbox/shared/supportpackages/stm32/include
+-I"C:/Users/camer/OneDrive/Desktop/CZ-Thesis/Simulink Coder/stm32testing/stm32_hwi_gettingstarted_ert_rtw"
+-I"C:/Program Files/MATLAB/R2024b/extern/include"
+-I"C:/Program Files/MATLAB/R2024b/simulink/include"
+-I"C:/Program Files/MATLAB/R2024b/rtw/c/src"
+-I"C:/Program Files/MATLAB/R2024b/rtw/c/src/ext_mode/common"
+-I"C:/Program Files/MATLAB/R2024b/rtw/c/ert"
+-I"C:/Program Files/MATLAB/R2024b/toolbox/target/shared/armcortexmbase/scheduler/include"
+-I"C:/Program Files/MATLAB/R2024b/toolbox/target/shared/armcortexmbase/xcp/include"
+-I"C:/Program Files/MATLAB/R2024b/rtw/c/src/ext_mode/serial"
+-I"C:/Program Files/MATLAB/R2024b/toolbox/target/shared/svd/common/include"
+-IC:/ProgramData/MATLAB/SupportPackages/R2024b/3P.instrset/cmsis.instrset/CMSIS/Core/Include
+-IC:/ProgramData/MATLAB/SupportPackages/R2024b/3P.instrset/cmsis_dsp.instrset/Include
+-IC:/ProgramData/MATLAB/SupportPackages/R2024b/3P.instrset/cmsis_dsp.instrset/Include/dsp
+-I"C:/Users/camer/OneDrive/Desktop/CZ-Thesis/Simulink Coder/stm32testing/stm32isrTesting/Drivers/STM32F4xx_HAL_Driver/Inc"
+-I"C:/Users/camer/OneDrive/Desktop/CZ-Thesis/Simulink Coder/stm32testing/stm32isrTesting/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"
+-I"C:/Users/camer/OneDrive/Desktop/CZ-Thesis/Simulink Coder/stm32testing/stm32isrTesting/Drivers/CMSIS/Device/ST/STM32F4xx/Include"
+-I"C:/Users/camer/OneDrive/Desktop/CZ-Thesis/Simulink Coder/stm32testing/stm32isrTesting/Drivers/CMSIS/Include"

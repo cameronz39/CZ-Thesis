@@ -1,0 +1,2 @@
+startup_stm32f446retx.o: \
+ C:/Users/camer/OneDrive/Desktop/CZ-THE~1/SIMULI~1/STM32T~1/stm32isrTesting/STM32CubeIDE/Application/User/Startup/startup_stm32f446retx.s

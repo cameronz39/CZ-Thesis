@@ -1,0 +1,41 @@
+MW_ArduinoEncoder.o: \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/toolbox/target/supportpackages/arduinobase/src/MW_ArduinoEncoder.cpp \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/toolbox/target/supportpackages/arduinobase/include/MW_ArduinoEncoder.h \
+ C:/Users/camer/OneDrive/Desktop/CZ-THE~1/SIMULI~1/MY_DRI~1/motorPositionTest_ert_rtw/rtwtypes.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Arduino.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/binary.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/WCharacter.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/WString.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/HardwareSerial.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Stream.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Print.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Printable.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/USBAPI.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Arduino.h \
+ C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/variants/mega/pins_arduino.h
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/toolbox/target/supportpackages/arduinobase/include/MW_ArduinoEncoder.h:
+
+C:/Users/camer/OneDrive/Desktop/CZ-THE~1/SIMULI~1/MY_DRI~1/motorPositionTest_ert_rtw/rtwtypes.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Arduino.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/binary.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/WCharacter.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/WString.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/HardwareSerial.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Stream.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Print.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Printable.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/USBAPI.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/cores/arduino/Arduino.h:
+
+C:/ProgramData/MATLAB/SupportPackages/R2024b/aCLI/data/packages/arduino/hardware/avr/1.8.3/variants/mega/pins_arduino.h:
