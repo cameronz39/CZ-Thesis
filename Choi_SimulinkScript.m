@@ -14,11 +14,11 @@ J_0 = [1.815  -0.014 0.004;
       -0.014  1.348  0.008;
        0.004  0.008 1.475];
 
-r_0 = [-6*10^-3, 7*10^-3 ,-3*10^-2]'; % solveable condition (displaced battery)
-% r_0 = 5.*[-6*10^-3, 7*10^-3 ,-1*10^-2]' % unsolvable condition
+% r_0 = [-6*10^-3, 7*10^-3 ,-3*10^-2]'; % solveable condition (displaced battery)
+r_0 = [6*10^-3, 0 ,-3*10^-2]'; % solveable condition (displaced battery)
 % r_0 = [0 0 0]';
 
-omega_0 = [0 0.0001 0]';
+omega_0 = [0 0.0001 0.02]';
 
 EA_0 = deg2rad([0 0 0]'); 
 
@@ -37,10 +37,10 @@ n = 5;
 m_mmu = 2 * ((0.015*6) + (n*.236) + 0.177)
 m_mmu2 = 2*((0.015*6) + (6*.193) + 0.177)
 
-gainScale = 0.5;
-K_omega = gainScale*3;
+gainScale = 0.1;
+K_omega = gainScale*1;
 K_q = gainScale*1;
-K_I = gainScale*1;
+K_I = gainScale*3;
 
 %%
 out = sim('Choi_Simulink.slx');
@@ -49,8 +49,8 @@ clc
 t = out.tout;
 r_b = out.r_b.signals.values;
 r_mmus = out.r_mmus.signals.values;
-% EA_b_N = rad2deg(quat2eul(out.q_b_N.signals.values));
 EA_b_N = out.EA_b_N.signals.values;
+
 figure;
 plot(t,r_b,'LineWidth',1.2);
 grid on;
@@ -73,3 +73,9 @@ figure;
 plot(t,EA_b_N,'LineWidth',1.2)
 grid on
 legend("Roll","Pitch","Yaw")
+
+%%
+q = [0.92 0.00 -0.01 -.37];
+rad2deg(quat2eul(q,'XYZ'))
+
+quat2dcm(q)
