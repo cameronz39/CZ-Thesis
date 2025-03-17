@@ -14,11 +14,10 @@ J_0 = [1.815  -0.014 0.004;
       -0.014  1.348  0.008;
        0.004  0.008 1.475];
 
-% r_0 = [-6*10^-3, 7*10^-3 ,-3*10^-2]'; % solveable condition (displaced battery)
-r_0 = [6*10^-3, 6*10^-3 ,-3*10^-2]'; % solveable condition (displaced battery)
+r_0 = [6*10^-3, 6*10^-3 ,-2*10^-2]'; % solveable condition (displaced battery)
 % r_0 = [0 0 0]';
 
-omega_0 = [0 0.00 0.02]';
+omega_0 = [0 0.00 0.03]';
 % omega_0 = [0 0.00 0.00]';
 
 EA_0 = deg2rad([0 0 0]'); 
@@ -40,11 +39,22 @@ n = 5;
 m_mmu = 2 * ((0.015*6) + (n*.236) + 0.177)
 m_mmu2 = 2*((0.015*6) + (6*.193) + 0.177)
 
+% idea 1: higher gain scale, all gains similar
+% gainScale = 0.5;
+% K_omega = gainScale*1;
+% K_q = gainScale*1;
+% K_I = gainScale*1;
+
+% idea 2: lower gain scale, high integral gain
 gainScale = 0.1;
 K_omega = gainScale*1;
 K_q = gainScale*1;
 K_I = gainScale*3;
 
+
+% constants for testing adaptive control
+k_p = 200; 
+r_hat_0 = [0 0 0]'; % initial estimation of r
 %%
 out = sim('Choi_Simulink.slx');
 %%
@@ -80,7 +90,77 @@ grid on
 legend("Roll","Pitch","Yaw")
 
 %%
-q = [0.92 0.00 -0.01 -.37];
-rad2deg(quat2eul(q,'XYZ'))
-
-quat2dcm(q)
+% n = length(out.tout);
+% C_b_N = quat2dcm(q_b_N);
+% x_N = zeros(n,3);
+% y_N = zeros(n,3);
+% z_N = zeros(n,3);
+% 
+% for i = 1:n
+%     C_N_b = C_b_N(:,:,i)';
+%     x_N(i,:) = C_N_b*[1 0 0]';
+%     y_N(i,:) = C_N_b*[0 1 0]';
+%     z_N(i,:) = C_N_b*[0 0 1]';
+% end
+% 
+% figure;
+% axis equal;
+% grid on;
+% hold on;
+% 
+% % Set axis limits (adjust based on your data)
+% scale = 1;
+% sliderScale = 0.25;
+% xlim([-1.3*scale, 1.3*scale]);
+% ylim([-1.3*scale, 1.3*scale]);
+% zlim([-1.3*scale, 1.3*scale]);
+% 
+% xlabel('X');
+% ylabel('Y');
+% zlabel('Z');
+% title('Moving Vector Animation');
+% 
+% % Camera settings
+% view(3);                     % Default 3D view
+% campos([5, 5, 5]);           % Camera position (adjust as needed)
+% camtarget([0, 0, 0]);        % Camera looks at the origin
+%            % Z-axis is the "up" direction
+% 
+% quiver3(0, 0, 0, scale/2, 0, 0, 'b', 'LineWidth', 1, 'MaxHeadSize', 0.5); % X-axis (red)
+% quiver3(0, 0, 0, 0, scale/2, 0, 'b', 'LineWidth', 1, 'MaxHeadSize', 0.5); % Y-axis (green)
+% quiver3(0, 0, 0, 0, 0, scale/2, 'b', 'LineWidth', 1, 'MaxHeadSize', 0.5); % Z-axis (blue)
+% 
+% % COM
+% hVector1 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.2, 'Color', 'g');
+% 
+% % body basis vectors
+% hVector2 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.5, 'Color', 'r');
+% hVector3 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.5, 'Color', 'r');
+% hVector4 = quiver3(0, 0, 0, 0, 0, 0, 'LineWidth', 2, 'MaxHeadSize', 0.5, 'Color', 'r');
+% 
+% for i = 1:n-1
+% 
+%     % COM
+%     % hVector1.UData = r_N(i, 1);
+%     % hVector1.VData = r_N(i, 2);
+%     % hVector1.WData = r_N(i, 3);
+% 
+%     % x body
+%     hVector2.UData = scale*x_N(i, 1);
+%     hVector2.VData = scale*x_N(i, 2);
+%     hVector2.WData = scale*x_N(i, 3);
+% 
+%     % y body
+%     hVector3.UData = scale*y_N(i, 1);
+%     hVector3.VData = scale*y_N(i, 2);
+%     hVector3.WData = scale*y_N(i, 3);
+% 
+%     % z body
+%     hVector4.UData = scale*z_N(i, 1);
+%     hVector4.VData = scale*z_N(i, 2);
+%     hVector4.WData = scale*z_N(i, 3);
+% 
+%     % Pause for a short duration to create animation effect
+%     pause((out.tout(i+1)-out.tout(i)))
+%     disp(out.tout(i))
+% end

@@ -40,7 +40,7 @@ C_f = 0.000; % coefficient of friction
 
 r_hat_0 = [0 0 0]'; % initial estimation of r
 
-w_0 = [0 0 0]'; % [rad/s]
+w_0 = [0 0 0.02]'; % [rad/s]
 % w_0 = [0.0888 0.8229 1.3611]';
 q_0 = [0 0 0 1]';
 EA_0 = [0 0 0]';
