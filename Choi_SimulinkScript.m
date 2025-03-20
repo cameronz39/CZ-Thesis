@@ -25,7 +25,7 @@ EA_0 = deg2rad([0 0 0]');
 % transformations are inertial to body
 % XYZ rotation order must be explicitly specified
 q_0 = eul2quat(EA_0',"XYZ")'; 
-
+q_0 = [0.99 -0.005 -0.063 -0.105]';
 q_d = [1 0 0 0]';
 
 q_e_0 = quatmultiply(q_d',q_0');
@@ -47,9 +47,9 @@ m_mmu2 = 2*((0.015*6) + (6*.193) + 0.177)
 
 % idea 2: lower gain scale, high integral gain
 gainScale = 0.1;
-K_omega = gainScale*1;
-K_q = gainScale*1;
-K_I = gainScale*3;
+K_omega = gainScale*4;
+K_q = gainScale*4;
+K_I = gainScale*12;
 
 
 % constants for testing adaptive control
@@ -164,3 +164,4 @@ legend("Roll","Pitch","Yaw")
 %     pause((out.tout(i+1)-out.tout(i)))
 %     disp(out.tout(i))
 % end
+
