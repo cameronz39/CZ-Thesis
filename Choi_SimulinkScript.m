@@ -15,12 +15,13 @@ J_0 = [1.815  -0.014 0.004;
        0.004  0.008 1.475];
 
 r_0 = [6*10^-3, 6*10^-3 ,-2*10^-2]'; % solveable condition (displaced battery)
+r_0 = [0.1*10^-3, 0.1*10^-3 ,-1*10^-3]';
 % r_0 = [0 0 0]';
 
 omega_0 = [0 0.00 0.03]';
-% omega_0 = [0 0.00 0.00]';
+omega_0 = [0 0.00 0.00]';
 
-EA_0 = deg2rad([0 0 0]'); 
+EA_0 = deg2rad([1 0 0]'); 
 
 % transformations are inertial to body
 % XYZ rotation order must be explicitly specified
@@ -46,7 +47,9 @@ m_mmu2 = 2*((0.015*6) + (6*.193) + 0.177)
 % K_I = gainScale*1;
 
 % idea 2: lower gain scale, high integral gain
-gainScale = 0.1;
+% gainScale = 0.1;
+gainScale = 0; % to test tumbling motion
+
 K_omega = gainScale*4;
 K_q = gainScale*4;
 K_I = gainScale*12;
