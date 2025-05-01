@@ -9,24 +9,24 @@ clear
 % r_0 = [-5*10^-6 5*10^-6 -3*10^-4]';
 
 % SADS Values
-m_s = 33.629; % [kg]
+m_s = 29; % [kg]
 J_0 = [1.815  -0.014 0.004;
       -0.014  1.348  0.008;
        0.004  0.008 1.475];
+stepsPerRev = 1600;
 
 r_0 = [6*10^-3, 6*10^-3 ,-2*10^-2]'; % solveable condition (displaced battery)
-r_0 = [0.1*10^-3, 0.1*10^-3 ,-1*10^-3]';
-% r_0 = [0 0 0]';
+% r_0 = [0.1*10^-3, 0.1*10^-3 ,-1*10^-3]'; % simple rocking motion
+% r_0 = [0 0 0]'; % no inbalance
 
-omega_0 = [0 0.00 0.03]';
-omega_0 = [0 0.00 0.00]';
+omega_0 = [0 0.00 0.03]'; % slight spin, helps with stability
+% omega_0 = [0 0.00 0.00]';
 
 EA_0 = deg2rad([1 0 0]'); 
 
 % transformations are inertial to body
 % XYZ rotation order must be explicitly specified
 q_0 = eul2quat(EA_0',"XYZ")'; 
-q_0 = [0.99 -0.005 -0.063 -0.105]';
 q_d = [1 0 0 0]';
 
 q_e_0 = quatmultiply(q_d',q_0');
@@ -36,23 +36,24 @@ q_e_0 = [q_e_0(2) q_e_0(3) q_e_0(4)]';
 g_N = [0 0 -9.81];
 
 % six screws + n plates + ballscrew
-n = 5;
-m_mmu = 2 * ((0.015*6) + (n*.236) + 0.177)
-m_mmu2 = 2*((0.015*6) + (6*.193) + 0.177)
+n = 4;
+m_mmu = 2*((0.015*6) + (6*.193) + 0.177);
 
 % idea 1: higher gain scale, all gains similar
-% gainScale = 0.5;
-% K_omega = gainScale*1;
-% K_q = gainScale*1;
-% K_I = gainScale*1;
+gainScale = 0.5;
+K_omega = gainScale*1;
+K_q = gainScale*1;
+K_I = gainScale*1;
 
 % idea 2: lower gain scale, high integral gain
 % gainScale = 0.1;
-gainScale = 0; % to test tumbling motion
+% K_omega = gainScale*4;
+% K_q = gainScale*4;
+% K_I = gainScale*12;
 
-K_omega = gainScale*4;
-K_q = gainScale*4;
-K_I = gainScale*12;
+% gainScale = 0; % to test tumbling motion
+
+
 
 
 % constants for testing adaptive control
@@ -91,6 +92,18 @@ figure;
 plot(t,quat2eul(q_b_N,'XYZ'),'LineWidth',1.2)
 grid on
 legend("Roll","Pitch","Yaw")
+
+figure
+stepper_speeds_x = gradient(r_mmus(:,1),t);
+stepper_speeds_y = gradient(r_mmus(:,2),t);
+stepper_speeds_x = (stepper_speeds_x./0.010).*stepsPerRev;
+stepper_speeds_y = (stepper_speeds_y./0.010).*stepsPerRev;
+plot(t,stepper_speeds_x,'LineWidth',1.2)
+hold on 
+plot(t,stepper_speeds_y,'LineWidth',1.2)
+title("Stepper Motor Speeds")
+grid on
+ylabel("Steps/sec")
 
 %%
 % n = length(out.tout);
