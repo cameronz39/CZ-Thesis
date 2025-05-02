@@ -1,5 +1,7 @@
 
 %% 4-state UKF used in the second phase of the hybrid balancing scheme for balancing the r z component.
+clc
+clear
 
 tf = 100;          % simulation length [s]
 dt = 0.1;          % simulation step size [s]
@@ -50,6 +52,7 @@ for t = dt:dt:tf
     y(:)     = y_dt(end,:)';
     xstate(1:4) = y(4:7)' + sqrt(Q)*randn(4,1); % add process noise
     z = H*xstate + sqrt(R)*randn(3,1);          % noisy measurement
+    z2 = y(1:3)' + sqrt(R)*randn(3,1);
 
     % Step 3: Time update
     [root,~] = chol(n*Pukf);         % Cholesky of nP
@@ -58,26 +61,26 @@ for t = dt:dt:tf
         sigma(:,i+n) = xhatukf - root(i,:)';
     end
     for i = 1 : 2*n %1:2n  
-        xbreve(:,i) = sigma(:,i);  
+        x_k_i(:,i) = sigma(:,i);  
     end        
 
     % Step 3(b): Use the known f(.) non linear function to transform the  % sigma points into xhat_k(i) vectors.
     for i = 1:2*n
-        xbrevedot   = eom_ukf(t,[y(1:3)'; xbreve(1:4,i)]);
-        xbreve(:,i) = xbreve(:,i) + [xbrevedot(4:6); 0]*dt;
+        x_k_idot   = eom_ukf(t,[z2; x_k_i(1:4,i)]);
+        x_k_i(:,i) = x_k_i(:,i) + [x_k_idot(4:6); 0]*dt;
     end
 
 
     % Step 3(c): Combine the xhat_k(i) vectors to obtain the a priori state  % estimate at time k.
     xhatukf = zeros(n,1);  
     for i = 1 : 2*n % i=1:2n  
-        xhatukf = xhatukf + W(i) * xbreve(:,i); % W is the wheight function (see beginning of file)  
+        xhatukf = xhatukf + W(i) * x_k_i(:,i); % W is the wheight function (see beginning of file)  
     end
 
     % Step 3(d): Estimate a priori error covariance.
     Pukf = zeros(n,n);  
     for i = 1 : 2*n %i=1:2n  
-        Pukf = Pukf + W(i) * (xbreve(:,i) - xhatukf) * (xbreve(:,i) - xhatukf)';  
+        Pukf = Pukf + W(i) * (x_k_i(:,i) - xhatukf) * (x_k_i(:,i) - xhatukf)';  
     end  
     Pukf = Pukf + Q;  
     d2(k) = (z - H * xhatukf)' * inv(H * Pukf * H' + R) * (z - H * xhatukf); %xhatukf and Pukf -> a priori
@@ -85,20 +88,20 @@ for t = dt:dt:tf
     % Step 4: Measurement update  
     % Step 4(a): Choose sigma points x_k(i).
     % Start of optional step (comment lines below if you want)
-    [root,~] = chol(n*Pukf); %n=15
-    for i = 1:n 
-        sigma(:,i)   = xhatukf + root(i,:)';
-        sigma(:,i+n) = xhatukf - root(i,:)';
-    end
-    
-    for i = 1 : 2*n %1:2n  
-        xbreve(:,i) = sigma(:,i);  
-    end
+    % [root,~] = chol(n*Pukf); %n=15
+    % for i = 1:n 
+    %     sigma(:,i)   = xhatukf + root(i,:)';
+    %     sigma(:,i+n) = xhatukf - root(i,:)';
+    % end
+    % 
+    % for i = 1 : 2*n %1:2n  
+    %     x_k_i(:,i) = sigma(:,i);  
+    % end
     % End of optional step (comment lines above if you want)
 
     % Step 4(b): Apply the nonlinear measurement equation to the sigma points. In our case, the measurement equation is linear.
     for i = 1 : 2*n %i=1:2n  
-        zukf(:,i) = H*xbreve(:,i);  
+        zukf(:,i) = H*x_k_i(:,i);  
     end
 
     % Step 4(c): Combine the yhat_k(i) vectors to obtain predicted  measurement at time k.
@@ -111,7 +114,7 @@ for t = dt:dt:tf
     Pxy = zeros(n,3);
     for i = 1 : 2*n %i=1:2n  
         Py = Py + W(i) * (zukf(:,i) - zhat) * (zukf(:,i) - zhat)';  
-        Pxy = Pxy + W(i) * (xbreve(:,i) - xhatukf) * (zukf(:,i) - zhat)';  
+        Pxy = Pxy + W(i) * (x_k_i(:,i) - xhatukf) * (zukf(:,i) - zhat)';  
     end  
     Py = Py + R;
 
