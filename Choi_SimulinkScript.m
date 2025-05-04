@@ -93,7 +93,7 @@ plot(t,quat2eul(q_b_N,'XYZ'),'LineWidth',1.2)
 grid on
 legend("Roll","Pitch","Yaw")
 
-figure
+figure;
 stepper_speeds_x = gradient(r_mmus(:,1),t);
 stepper_speeds_y = gradient(r_mmus(:,2),t);
 stepper_speeds_x = (stepper_speeds_x./0.010).*stepsPerRev;
@@ -104,6 +104,17 @@ plot(t,stepper_speeds_y,'LineWidth',1.2)
 title("Stepper Motor Speeds")
 grid on
 ylabel("Steps/sec")
+
+figure;
+stepper_accels_x = gradient(stepper_speeds_x,t);
+stepper_accels_y = gradient(stepper_speeds_y,t);
+plot(t,stepper_accels_x,'LineWidth',1.2)
+hold on
+plot(t,stepper_accels_y);
+title("Stepper Motor Accelerations")
+grid on
+ylabel("Steps/sec^2")
+ylim([-5000 5000])
 
 %%
 % n = length(out.tout);
