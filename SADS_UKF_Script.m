@@ -19,7 +19,7 @@ J = [1.815  0 0;
       0  1.348  0;
        0  0 1.475];
 % r_0 = [0.1*10^-3, 0.1*10^-3 ,-1*10^-3]';
-r_0 = [0 0 -0.001]';
+r_0 = [-0.003 0.006 -0.001]';
 g_N = [0 0 -9.81];
 
 % for simulating plant ("truth")
@@ -45,13 +45,13 @@ Q  = diag([5e-5 5e-5 5e-5 4e-12 4e-12 4e-12 4e-12 5e-6]);
 omega_0 = [0 0.00 0.00]';
 % omega_0 = [0.50 0.10 0.30]';
 
-EA_0 = deg2rad([10 0 0]'); 
+EA_0 = deg2rad([10 10 0]'); 
 
 % transformations are inertial to body
 % XYZ rotation order must be explicitly specified
 q_0 = eul2quat(EA_0',"XYZ")'; 
 
-x_0 = [omega_0; q_0; -0.001];
+x_0 = [omega_0; q_0; 0];
 n = size(x_0,1);
 P_0 = diag([1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6]);
 

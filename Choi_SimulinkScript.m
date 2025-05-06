@@ -13,7 +13,8 @@ m_s = 29; % [kg]
 J_0 = [1.815  -0.014 0.004;
       -0.014  1.348  0.008;
        0.004  0.008 1.475];
-stepsPerRev = 1600;
+
+stepsPerRev = 3200;
 
 r_0 = [6*10^-3, 6*10^-3 ,-2*10^-2]'; % solveable condition (displaced battery)
 % r_0 = [0.1*10^-3, 0.1*10^-3 ,-1*10^-3]'; % simple rocking motion
